@@ -39,17 +39,17 @@ namespace GithubQuery.Services
             var results = new List<GithubRepository>();
             var parsedHeader = new LinkHeader();
             var url = $"{_remoteServiceBaseUrl}/orgs/{organization}/repos?page=1&per_page={resultsPerPage}";
-
+            
             do
             {
-                var response = _httpClient.GetAsync(url);
+                var response = AsyncHelper.RunSync(() => _httpClient.GetAsync(url));
                 var linkHeader = new List<string>().AsEnumerable();
-                response.Result.Headers.TryGetValues("Link", out linkHeader);
+                response.Headers.TryGetValues("Link", out linkHeader);
                 parsedHeader = linkHeader?.First().FromHeader();
 
-                if (response.Result.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
-                    results.AddRange(JsonConvert.DeserializeObject<List<OrganizationRepository>>(response.Result.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
+                    results.AddRange(JsonConvert.DeserializeObject<List<OrganizationRepository>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
                     url = parsedHeader?.NextLink;
                 }
                 
@@ -76,11 +76,13 @@ namespace GithubQuery.Services
             }
 
             var results = new List<OrganizationRepository>();
-            var response = _httpClient.GetAsync($"{_remoteServiceBaseUrl}/orgs/{organization}/repos?page={pageNumber}&per_page={resultsPerPage}");
+            var response = 
+                AsyncHelper.RunSync(() => 
+                    _httpClient.GetAsync($"{_remoteServiceBaseUrl}/orgs/{organization}/repos?page={pageNumber}&per_page={resultsPerPage}"));
 
-            if (response.Result.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                results.AddRange(JsonConvert.DeserializeObject<List<OrganizationRepository>>(response.Result.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
+                results.AddRange(JsonConvert.DeserializeObject<List<OrganizationRepository>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
             }
 
             _cache.Set(cacheKey, results, DateTimeOffset.Now.AddHours(1));
@@ -109,14 +111,14 @@ namespace GithubQuery.Services
 
             do
             {
-                var response = _httpClient.GetAsync(url);
+                var response = AsyncHelper.RunSync(() => _httpClient.GetAsync(url));
                 var linkHeader = new List<string>().AsEnumerable();
-                response.Result.Headers.TryGetValues("Link", out linkHeader);
+                response.Headers.TryGetValues("Link", out linkHeader);
                 parsedHeader = linkHeader?.First().FromHeader();
                 
-                if (response.Result.IsSuccessStatusCode)
+                if (response.IsSuccessStatusCode)
                 {
-                    results.AddRange(JsonConvert.DeserializeObject<List<PullRequest>>(response.Result.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
+                    results.AddRange(JsonConvert.DeserializeObject<List<PullRequest>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
                     url = parsedHeader?.NextLink;
                 }
 
@@ -138,11 +140,13 @@ namespace GithubQuery.Services
             }
 
             var results = new List<PullRequest>();
-            var response = _httpClient.GetAsync($"{_remoteServiceBaseUrl}/repos/{organization}/{repoName}/pulls?state={state}&page={pageNumber}&per_page={resultsPerPage}");
-
-            if (response.Result.IsSuccessStatusCode)
+            var response = 
+                AsyncHelper.RunSync(() => 
+                    _httpClient.GetAsync($"{_remoteServiceBaseUrl}/repos/{organization}/{repoName}/pulls?state={state}&page={pageNumber}&per_page={resultsPerPage}"));
+            
+            if (response.IsSuccessStatusCode)
             {
-                results.AddRange(JsonConvert.DeserializeObject<List<PullRequest>>(response.Result.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
+                results.AddRange(JsonConvert.DeserializeObject<List<PullRequest>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
             }
 
             _cache.Set(cacheKey, results, DateTimeOffset.Now.AddHours(1));
