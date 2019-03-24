@@ -15,24 +15,38 @@ namespace GithubQuery.Facade
             _githubApiService = githubApiService;
         }
 
-        public IEnumerable<GithubRepository> GetAllRepos(string organization, int resultsPerPage)
+        public IEnumerable<GithubRepository> GetAllRepos(string organization)
         {
-            return _githubApiService.GetAllRepos(organization, resultsPerPage);
+            return _githubApiService.GetAllRepos(organization);
         }
-
+        
         public IEnumerable<GithubRepository> GetReposByPage(string organization, int pageNumber, int resultsPerPage)
         {
             return _githubApiService.GetReposByPage(organization, pageNumber, resultsPerPage);
         }
 
-        public IEnumerable<PullRequest> GetAllPullRequests(string organization, string repoName, State state, int resultsPerPage)
+        public IEnumerable<PullRequest> GetAllOrgPullRequests(string organization, State state)
         {
-            return _githubApiService.GetAllPullRequests(organization, repoName, state, resultsPerPage);
+            var pullrequests = new List<PullRequest>();
+
+            var repos = _githubApiService.GetAllRepos(organization);
+
+            foreach (var repo in repos)
+            {
+                pullrequests.AddRange(_githubApiService.GetAllRepoPullRequests(organization, repo.Name, state));
+            }
+
+            return pullrequests;
         }
 
-        public IEnumerable<PullRequest> GetPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage)
+        public IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state, int resultsPerPage)
         {
-            return _githubApiService.GetPullRequestsByPage(organization, repoName, state, pageNumber, resultsPerPage);
+            return _githubApiService.GetAllRepoPullRequests(organization, repoName, state, resultsPerPage);
+        }
+
+        public IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage)
+        {
+            return _githubApiService.GetRepoPullRequestsByPage(organization, repoName, state, pageNumber, resultsPerPage);
         }
     }
 }

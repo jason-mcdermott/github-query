@@ -7,6 +7,8 @@ namespace GithubQuery.Attributes
 {
     public class ExceptionFilter : IExceptionFilter
     {
+        // credit for this code goes to: TalkingDotnet
+        // https://www.talkingdotnet.com/global-exception-handling-in-aspnet-core-webapi/
         public void OnException(ExceptionContext context)
         {
             HttpStatusCode status = HttpStatusCode.InternalServerError;

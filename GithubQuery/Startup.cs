@@ -33,6 +33,7 @@ namespace GithubQuery
                     options.SerializerSettings.Formatting = Formatting.Indented;
                 });
 
+            services.AddMemoryCache();
 
             services.AddTransient<IGithubApiFacade, GithubApiFacade>();
             services.AddTransient<IGithubApiService, GithubApiService>();

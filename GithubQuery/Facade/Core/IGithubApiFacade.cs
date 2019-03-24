@@ -6,12 +6,14 @@ namespace GithubQuery.Facade.Core
 {
     public interface IGithubApiFacade
     {
-        IEnumerable<GithubRepository> GetAllRepos(string organization, int resultsPerPage);
-
+        IEnumerable<GithubRepository> GetAllRepos(string organization);
+       
         IEnumerable<GithubRepository> GetReposByPage(string organization, int pageNumber, int resultsPerPage);
 
-        IEnumerable<PullRequest> GetAllPullRequests(string organization, string repoName, State state, int resultsPerPage);
+        IEnumerable<PullRequest> GetAllOrgPullRequests(string organization, State state);
 
-        IEnumerable<PullRequest> GetPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage);
+        IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state, int resultsPerPage);
+
+        IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage);
     }
 }
