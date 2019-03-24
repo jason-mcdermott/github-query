@@ -8,6 +8,7 @@ using GithubQuery.Extensions;
 using GithubQuery.Models;
 using GithubQuery.Services.Core;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace GithubQuery.Services
@@ -18,25 +19,34 @@ namespace GithubQuery.Services
         private readonly IMemoryCache _cache;
         private readonly string _remoteServiceBaseUrl = "https://api.github.com";
         
-        public GithubApiService(HttpClient httpClient, IMemoryCache cacheProvider)
+        public GithubApiService(HttpClient httpClient, IMemoryCache cacheProvider, IConfiguration configuration)
         {
             _cache = cacheProvider;
             _httpClient = httpClient;
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "GithubQuery");
+            
+            string accessToken = configuration["accessToken"];
+
+            if (!string.IsNullOrEmpty(accessToken))
+            {
+                // use access token if you got one
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+            }
+
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
         public IEnumerable<GithubRepository> GetAllRepos(string organization, int resultsPerPage)
         {
             string cacheKey = $"repos|{organization}|{resultsPerPage}";
-            var cachedResponse = _cache.Get<List<GithubRepository>>(cacheKey);
+            var cachedResponse = _cache.Get<List<OrganizationRepository>>(cacheKey);
 
             if (cachedResponse != null)
             {
                 return cachedResponse;
             }
 
-            var results = new List<GithubRepository>();
+            var results = new List<OrganizationRepository>();
             var parsedHeader = new LinkHeader();
             var url = $"{_remoteServiceBaseUrl}/orgs/{organization}/repos?page=1&per_page={resultsPerPage}";
             
@@ -68,7 +78,7 @@ namespace GithubQuery.Services
         public IEnumerable<GithubRepository> GetReposByPage(string organization, int pageNumber, int resultsPerPage)
         {
             string cacheKey = $"repos|{organization}|{pageNumber}|{resultsPerPage}";
-            var cachedResponse = _cache.Get<List<GithubRepository>>(cacheKey);
+            var cachedResponse = _cache.Get<List<OrganizationRepository>>(cacheKey);
 
             if (cachedResponse != null)
             {

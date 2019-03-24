@@ -9,56 +9,13 @@ export class RepoList extends Component {
 
         let query = props.organization ? props.organization : 'ramda';
 
-        fetch('api/github/search?organization=' + query)
+        fetch('api/ramda/repos')
             .then(response => response.json())
             .then(data => {
                 this.setState({ repos: data, loading: false });
             });
     }
-
-    //static renderTable(repos) {
-    //    return (
-    //        <table className='table'>
-    //            <thead>
-    //                <tr>
-    //                    <th>Repo</th>
-    //                    <th>Col1</th>
-    //                    <th>Col2</th>
-    //                    <th>Col3</th>
-    //                </tr>
-    //            </thead>
-    //            <tbody>
-    //                {repos.map(repo =>
-    //                    <tr key={repo.id}>
-    //                        <td>{repo.name}</td>
-    //                        <td>{repo.full_name}</td>
-    //                        <td>{repo.description}</td>
-    //                        <td>{repo.url}</td>
-    //                    </tr>
-    //                )}
-    //            </tbody>
-    //        </table>
-    //    );
-    //}
     
-    //static renderTable(repos) {
-        
-    //    return (
-    //        <ul>
-    //            {repos.map(function (groupItem, key) {
-    //                return (
-    //                    Object.entries(groupItem).map(([v, k]) => {
-    //                        return (
-    //                            <li> {v.toString()} :  </li>
-    //                        );
-    //                    })
-    //                );
-    //             })}
-    //        </ul>
-                    
-    //    );
-    //}
-
     static renderTable(repos) {
 
         return (
@@ -94,7 +51,7 @@ export class RepoList extends Component {
 
         return (
             <div>
-                <h1>Github Repos</h1>
+                <h1>Github Query</h1>
                 <p>Repos from the Ramda organization.</p>
                 {contents}
             </div>

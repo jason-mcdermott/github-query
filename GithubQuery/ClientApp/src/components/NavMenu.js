@@ -28,6 +28,11 @@ export class NavMenu extends Component {
                 <Glyphicon glyph='th-list' /> Github Repos
               </NavItem>
             </LinkContainer>
+            <LinkContainer to={'/repolinks'}>
+              <NavItem>
+                <Glyphicon glyph='th-list' /> Repo Links
+              </NavItem>
+            </LinkContainer>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
