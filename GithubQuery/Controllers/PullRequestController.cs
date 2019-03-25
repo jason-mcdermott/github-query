@@ -62,8 +62,15 @@ namespace GithubQuery.Controllers
         }
 
         [HttpGet]
+        [Route("{organization}/{repoName}/pulls/daterange")]
+        public async Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsDateRangeAsync(string organization, string repoName, DateTime start, DateTime end, string filter, State state = State.all, int resultsPerPage = 100)
+        {
+            return await _githubApiFacade.GetAllRepoPullRequestsAsync(organization, repoName, start, end, filter, state, resultsPerPage);
+        }
+
+        [HttpGet]
         [Route("{organization}/{repoName}/pulls/daterange/count")]
-        public async Task<JsonResult> GetAllRepoPullRequestsCountAsync(string organization, string repoName, DateTime start, DateTime end, string filter, State state = State.all, int resultsPerPage = 100)
+        public async Task<JsonResult> GetAllRepoPullRequestsDateCountAsync(string organization, string repoName, DateTime start, DateTime end, string filter, State state = State.all, int resultsPerPage = 100)
         {
             var pulls = await _githubApiFacade.GetAllRepoPullRequestsAsync(organization, repoName, start, end, filter, state, resultsPerPage);
 

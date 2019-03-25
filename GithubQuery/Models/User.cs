@@ -30,13 +30,13 @@ namespace GithubQuery.Models
         public Uri FollowersUrl { get; set; }
 
         [JsonProperty("following_url")]
-        public string FollowingUrl { get; set; }
+        public Uri FollowingUrl { get; set; }
 
         [JsonProperty("gists_url")]
-        public string GistsUrl { get; set; }
+        public Uri GistsUrl { get; set; }
 
         [JsonProperty("starred_url")]
-        public string StarredUrl { get; set; }
+        public Uri StarredUrl { get; set; }
 
         [JsonProperty("subscriptions_url")]
         public Uri SubscriptionsUrl { get; set; }
@@ -48,7 +48,7 @@ namespace GithubQuery.Models
         public Uri ReposUrl { get; set; }
 
         [JsonProperty("events_url")]
-        public string EventsUrl { get; set; }
+        public Uri EventsUrl { get; set; }
 
         [JsonProperty("received_events_url")]
         public Uri ReceivedEventsUrl { get; set; }
