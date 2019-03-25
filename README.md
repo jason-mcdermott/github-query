@@ -1,5 +1,5 @@
 ﻿# GithubQuery
-A Github API viewer made with .NET Core.
+A Github REST API v3 viewer made with .NET Core.
 
 ## Project Notes
 ```
