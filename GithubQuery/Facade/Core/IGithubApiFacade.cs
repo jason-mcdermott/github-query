@@ -16,7 +16,7 @@ namespace GithubQuery.Facade.Core
 
         Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, State state, int resultsPerPage);
 
-        Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, DateTime start, DateTime end, string filter, State state, int resultsPerPage);
+        Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, DateTime start, DateTime end, string filterBy, State state, int resultsPerPage);
 
         Task<IEnumerable<PullRequest>> GetRepoPullRequestsByPageAsync(string organization, string repoName, State state, int pageNumber, int resultsPerPage);
     }
