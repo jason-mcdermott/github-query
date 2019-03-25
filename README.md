@@ -31,5 +31,4 @@ A Github REST API v3 viewer made with .NET Core.
   https://localhost:44354/api/ramda/ramdangular/pulls/daterange/count?start=2014-12-02T12:04:42Z&end=2014-12-02T16:04:42Z&filter=updated_at
 
 
-- I leveraged existing code for the GithubQuery.Attributes.ExceptionFilter and the GithubQuery.Extensions.LinkHeaderExtensions (which saved
-  me a lot of time and tears!). Links to sources are in the code files.
+- I leveraged existing code for the GithubQuery.Attributes.ExceptionFilter and the GithubQuery.Extensions.LinkHeaderExtensions (which saved me a lot of time and tears!). Links to sources are in the code files.
