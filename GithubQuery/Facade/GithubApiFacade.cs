@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GithubQuery.Enums;
 using GithubQuery.Facade.Core;
 using GithubQuery.Models;
@@ -16,49 +17,50 @@ namespace GithubQuery.Facade
         {
             _githubApiService = githubApiService;
         }
-
-        public IEnumerable<GithubRepository> GetAllRepos(string organization)
-        {
-            return _githubApiService.GetAllRepos(organization);
-        }
         
-        public IEnumerable<GithubRepository> GetReposByPage(string organization, int pageNumber, int resultsPerPage)
+        public async Task<IEnumerable<GithubRepository>> GetAllReposAsync(string organization)
         {
-            return _githubApiService.GetReposByPage(organization, pageNumber, resultsPerPage);
+            return await _githubApiService.GetAllReposAsync(organization);
         }
 
-        public IEnumerable<PullRequest> GetAllOrgPullRequests(string organization, State state)
+        public async Task<IEnumerable<GithubRepository>> GetReposByPageAsync(string organization, int pageNumber, int resultsPerPage)
+        {
+            return await _githubApiService.GetReposByPageAsync(organization, pageNumber, resultsPerPage);
+        }
+
+        public async Task<IEnumerable<PullRequest>> GetAllOrgPullRequestsAsync(string organization, State state)
         {
             var pullrequests = new List<PullRequest>();
 
-            var repos = _githubApiService.GetAllRepos(organization);
+            var repos = await _githubApiService.GetAllReposAsync(organization);
 
             foreach (var repo in repos)
             {
-                pullrequests.AddRange(_githubApiService.GetAllRepoPullRequests(organization, repo.Name, state));
+                var pulls = await _githubApiService.GetAllRepoPullRequestsAsync(organization, repo.Name, state);
+                pullrequests.AddRange(pulls);
             }
 
             return pullrequests;
         }
 
-        public IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state, int resultsPerPage)
+        public async Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, State state, int resultsPerPage)
         {
-            return _githubApiService.GetAllRepoPullRequests(organization, repoName, state, resultsPerPage);
+            return await _githubApiService.GetAllRepoPullRequestsAsync(organization, repoName, state, resultsPerPage);
         }
 
-        public IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, DateTime start, DateTime end, string filter, State state, int resultsPerPage)
+        public async Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, DateTime start, DateTime end, string filter, State state, int resultsPerPage)
         {
             // perhap pass the 'filter' to a 'FilterFactory' that can return the correct Fun<T, bool>?
             var condition = new Func<PullRequest, bool>(x => x.UpdatedAt > start && x.UpdatedAt < end);
 
-            var pullRequests = _githubApiService.GetAllRepoPullRequests(organization, repoName, state, resultsPerPage);
+            var pullRequests = await _githubApiService.GetAllRepoPullRequestsAsync(organization, repoName, state, resultsPerPage);
             
             return pullRequests.Where(condition);
         }
 
-        public IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage)
+        public async Task<IEnumerable<PullRequest>> GetRepoPullRequestsByPageAsync(string organization, string repoName, State state, int pageNumber, int resultsPerPage)
         {
-            return _githubApiService.GetRepoPullRequestsByPage(organization, repoName, state, pageNumber, resultsPerPage);
+            return await _githubApiService.GetRepoPullRequestsByPageAsync(organization, repoName, state, pageNumber, resultsPerPage);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using GithubQuery.Enums;
 using GithubQuery.Models;
 
@@ -7,16 +7,16 @@ namespace GithubQuery.Services.Core
 {
     public interface IGithubApiService
     {
-        IEnumerable<GithubRepository> GetAllRepos(string organization);
+        Task<IEnumerable<GithubRepository>> GetAllReposAsync(string organization);
 
-        IEnumerable<GithubRepository> GetAllRepos(string organization, int resultsPerPage);
+        Task<IEnumerable<GithubRepository>> GetAllReposAsync(string organization, int resultsPerPage);
+
+        Task<IEnumerable<GithubRepository>> GetReposByPageAsync(string organization, int pageNumber, int resultsPerPage);
+
+        Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, State state);
+
+        Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, State state, int resultsPerPage);
         
-        IEnumerable<GithubRepository> GetReposByPage(string organization, int pageNumber, int resultsPerPage);
-
-        IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state);
-
-        IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state, int resultsPerPage);
-        
-        IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage);
+        Task<IEnumerable<PullRequest>> GetRepoPullRequestsByPageAsync(string organization, string repoName, State state, int pageNumber, int resultsPerPage);
     }
 }
