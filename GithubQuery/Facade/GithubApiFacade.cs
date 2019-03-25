@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using GithubQuery.Enums;
 using GithubQuery.Facade.Core;
 using GithubQuery.Models;
@@ -42,6 +44,16 @@ namespace GithubQuery.Facade
         public IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state, int resultsPerPage)
         {
             return _githubApiService.GetAllRepoPullRequests(organization, repoName, state, resultsPerPage);
+        }
+
+        public IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, DateTime start, DateTime end, string filter, State state, int resultsPerPage)
+        {
+            // perhap pass the 'filter' to a 'FilterFactory' that can return the correct Fun<T, bool>?
+            var condition = new Func<PullRequest, bool>(x => x.UpdatedAt > start && x.UpdatedAt < end);
+
+            var pullRequests = _githubApiService.GetAllRepoPullRequests(organization, repoName, state, resultsPerPage);
+            
+            return pullRequests.Where(condition);
         }
 
         public IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage)

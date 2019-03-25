@@ -138,7 +138,7 @@ namespace GithubQuery.Services
 
             return results;
         }
-
+        
         public IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage)
         {
             string cacheKey = $"pulls|{organization}|{repoName}|{state}|{pageNumber}|{resultsPerPage}";

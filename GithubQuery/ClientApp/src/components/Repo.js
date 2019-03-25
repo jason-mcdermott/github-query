@@ -7,7 +7,7 @@ export class Repo extends Component {
         super(props);
         this.state = { repo: {}, loading: true };
 
-        fetch('api/github/repo')
+        fetch('api/ramda/repos')
             .then(response => response.json())
             .then(data => {
                 this.setState({

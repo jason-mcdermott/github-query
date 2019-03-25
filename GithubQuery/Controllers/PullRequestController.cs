@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GithubQuery.Enums;
 using GithubQuery.Facade.Core;
@@ -50,6 +51,18 @@ namespace GithubQuery.Controllers
             var result = new
             {
                 count = _githubApiFacade.GetAllRepoPullRequests(organization, repoName, state, resultsPerPage).ToList().Count
+            };
+
+            return Json(result);
+        }
+
+        [HttpGet]
+        [Route("{organization}/{repoName}/pulls/daterange/count")]
+        public JsonResult GetAllRepoPullRequestsCount(string organization, string repoName, DateTime start, DateTime end, string filter, State state = State.all, int resultsPerPage = 100)
+        {
+            var result = new
+            {
+                count = _githubApiFacade.GetAllRepoPullRequests(organization, repoName, start, end, filter, state, resultsPerPage).ToList().Count
             };
 
             return Json(result);

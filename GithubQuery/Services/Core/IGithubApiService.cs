@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GithubQuery.Enums;
 using GithubQuery.Models;
 
@@ -15,7 +16,7 @@ namespace GithubQuery.Services.Core
         IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state);
 
         IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state, int resultsPerPage);
-
+        
         IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage);
     }
 }
