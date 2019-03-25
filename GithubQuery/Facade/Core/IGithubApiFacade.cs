@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using GithubQuery.Enums;
 using GithubQuery.Models;
 
@@ -7,16 +8,16 @@ namespace GithubQuery.Facade.Core
 {
     public interface IGithubApiFacade
     {
-        IEnumerable<GithubRepository> GetAllRepos(string organization);
-       
-        IEnumerable<GithubRepository> GetReposByPage(string organization, int pageNumber, int resultsPerPage);
+        Task<IEnumerable<GithubRepository>> GetAllReposAsync(string organization);
 
-        IEnumerable<PullRequest> GetAllOrgPullRequests(string organization, State state);
+        Task<IEnumerable<GithubRepository>> GetReposByPageAsync(string organization, int pageNumber, int resultsPerPage);
 
-        IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state, int resultsPerPage);
+        Task<IEnumerable<PullRequest>> GetAllOrgPullRequestsAsync(string organization, State state);
 
-        IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, DateTime start, DateTime end, string filter, State state, int resultsPerPage);
+        Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, State state, int resultsPerPage);
 
-        IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage);
+        Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, DateTime start, DateTime end, string filter, State state, int resultsPerPage);
+
+        Task<IEnumerable<PullRequest>> GetRepoPullRequestsByPageAsync(string organization, string repoName, State state, int pageNumber, int resultsPerPage);
     }
 }

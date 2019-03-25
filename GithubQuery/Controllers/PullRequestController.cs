@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GithubQuery.Enums;
 using GithubQuery.Facade.Core;
 using GithubQuery.Models;
@@ -20,18 +21,20 @@ namespace GithubQuery.Controllers
         
         [HttpGet]
         [Route("{organization}/pulls")]
-        public IEnumerable<PullRequest> GetAllOrgPullRequests(string organization, State state = State.all)
+        public async Task<IEnumerable<PullRequest>> GetAllOrgPullRequestsAsync(string organization, State state = State.all)
         {
-            return _githubApiFacade.GetAllOrgPullRequests(organization, state);
+            return await _githubApiFacade.GetAllOrgPullRequestsAsync(organization, state);
         }
 
         [HttpGet]
         [Route("{organization}/pulls/count")]
-        public JsonResult GetAllOrgPullRequestsCount(string organization, State state = State.all)
+        public async Task<JsonResult> GetAllOrgPullRequestsCountAsync(string organization, State state = State.all)
         {
+            var pulls = await _githubApiFacade.GetAllOrgPullRequestsAsync(organization, state);
+
             var result = new
             {
-                count = _githubApiFacade.GetAllOrgPullRequests(organization, state).ToList().Count
+                count = pulls.ToList().Count
             };
 
             return Json(result);
@@ -39,18 +42,20 @@ namespace GithubQuery.Controllers
 
         [HttpGet]
         [Route("{organization}/{repoName}/pulls")]
-        public IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state = State.all, int resultsPerPage = 100)
+        public async Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, State state = State.all, int resultsPerPage = 100)
         {
-            return _githubApiFacade.GetAllRepoPullRequests(organization, repoName, state, resultsPerPage);
+            return await _githubApiFacade.GetAllRepoPullRequestsAsync(organization, repoName, state, resultsPerPage);
         }
 
         [HttpGet]
         [Route("{organization}/{repoName}/pulls/count")]
-        public JsonResult GetAllRepoPullRequestsCount(string organization, string repoName, State state = State.all, int resultsPerPage = 100)
+        public async Task<JsonResult> GetAllRepoPullRequestsCountAsync(string organization, string repoName, State state = State.all, int resultsPerPage = 100)
         {
+            var pulls = await _githubApiFacade.GetAllRepoPullRequestsAsync(organization, repoName, state, resultsPerPage);
+
             var result = new
             {
-                count = _githubApiFacade.GetAllRepoPullRequests(organization, repoName, state, resultsPerPage).ToList().Count
+                count = pulls.ToList().Count
             };
 
             return Json(result);
@@ -58,11 +63,13 @@ namespace GithubQuery.Controllers
 
         [HttpGet]
         [Route("{organization}/{repoName}/pulls/daterange/count")]
-        public JsonResult GetAllRepoPullRequestsCount(string organization, string repoName, DateTime start, DateTime end, string filter, State state = State.all, int resultsPerPage = 100)
+        public async Task<JsonResult> GetAllRepoPullRequestsCountAsync(string organization, string repoName, DateTime start, DateTime end, string filter, State state = State.all, int resultsPerPage = 100)
         {
+            var pulls = await _githubApiFacade.GetAllRepoPullRequestsAsync(organization, repoName, start, end, filter, state, resultsPerPage);
+
             var result = new
             {
-                count = _githubApiFacade.GetAllRepoPullRequests(organization, repoName, start, end, filter, state, resultsPerPage).ToList().Count
+                count = pulls.ToList().Count
             };
 
             return Json(result);
@@ -70,9 +77,9 @@ namespace GithubQuery.Controllers
 
         [HttpGet]
         [Route("{organization}/{repoName}/pulls/page/{pageNumber:int}")]
-        public IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state = State.all, int pageNumber = 1, int resultsPerPage = 100)
+        public async Task<IEnumerable<PullRequest>> GetRepoPullRequestsByPageAsync(string organization, string repoName, State state = State.all, int pageNumber = 1, int resultsPerPage = 100)
         {
-            return _githubApiFacade.GetRepoPullRequestsByPage(organization, repoName, state, pageNumber, resultsPerPage);
+            return await _githubApiFacade.GetRepoPullRequestsByPageAsync(organization, repoName, state, pageNumber, resultsPerPage);
         }
     }
 }

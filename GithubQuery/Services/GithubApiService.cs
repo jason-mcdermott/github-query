@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using GithubQuery.Enums;
 using GithubQuery.Extensions;
 using GithubQuery.Models;
@@ -35,8 +36,8 @@ namespace GithubQuery.Services
 
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
-
-        public IEnumerable<GithubRepository> GetAllRepos(string organization, int resultsPerPage)
+        
+        public async Task<IEnumerable<GithubRepository>> GetAllReposAsync(string organization, int resultsPerPage)
         {
             string cacheKey = $"repos|{organization}|{resultsPerPage}";
             var cachedResponse = _cache.Get<List<OrganizationRepository>>(cacheKey);
@@ -49,20 +50,21 @@ namespace GithubQuery.Services
             var results = new List<OrganizationRepository>();
             var parsedHeader = new LinkHeader();
             var url = $"{_remoteServiceBaseUrl}/orgs/{organization}/repos?page=1&per_page={resultsPerPage}";
-            
+
             do
             {
-                var response = AsyncHelper.RunSync(() => _httpClient.GetAsync(url));
+                var response = await _httpClient.GetAsync(url);
                 var linkHeader = new List<string>().AsEnumerable();
                 response.Headers.TryGetValues("Link", out linkHeader);
                 parsedHeader = linkHeader?.First().FromHeader();
 
                 if (response.IsSuccessStatusCode)
                 {
-                    results.AddRange(JsonConvert.DeserializeObject<List<OrganizationRepository>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
+                    var data = await response.Content.ReadAsStringAsync();
+                    results.AddRange(JsonConvert.DeserializeObject<List<OrganizationRepository>>(data));
                     url = parsedHeader?.NextLink;
                 }
-                
+
             } while (parsedHeader?.NextLink != null);
 
             _cache.Set(cacheKey, results, DateTimeOffset.Now.AddHours(1));
@@ -70,12 +72,12 @@ namespace GithubQuery.Services
             return results;
         }
 
-        public IEnumerable<GithubRepository> GetAllRepos(string organization)
+        public async Task<IEnumerable<GithubRepository>> GetAllReposAsync(string organization)
         {
-            return GetAllRepos(organization, 100);
+            return await GetAllReposAsync(organization, 100);
         }
 
-        public IEnumerable<GithubRepository> GetReposByPage(string organization, int pageNumber, int resultsPerPage)
+        public async Task<IEnumerable<GithubRepository>> GetReposByPageAsync(string organization, int pageNumber, int resultsPerPage)
         {
             string cacheKey = $"repos|{organization}|{pageNumber}|{resultsPerPage}";
             var cachedResponse = _cache.Get<List<OrganizationRepository>>(cacheKey);
@@ -86,13 +88,12 @@ namespace GithubQuery.Services
             }
 
             var results = new List<OrganizationRepository>();
-            var response = 
-                AsyncHelper.RunSync(() => 
-                    _httpClient.GetAsync($"{_remoteServiceBaseUrl}/orgs/{organization}/repos?page={pageNumber}&per_page={resultsPerPage}"));
+            var response = await _httpClient.GetAsync($"{_remoteServiceBaseUrl}/orgs/{organization}/repos?page={pageNumber}&per_page={resultsPerPage}");
 
             if (response.IsSuccessStatusCode)
             {
-                results.AddRange(JsonConvert.DeserializeObject<List<OrganizationRepository>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
+                var data = await response.Content.ReadAsStringAsync();
+                results.AddRange(JsonConvert.DeserializeObject<List<OrganizationRepository>>(data));
             }
 
             _cache.Set(cacheKey, results, DateTimeOffset.Now.AddHours(1));
@@ -100,12 +101,12 @@ namespace GithubQuery.Services
             return results;
         }
 
-        public IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state)
+        public async Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, State state)
         {
-            return GetAllRepoPullRequests(organization, repoName, state, 100);
+            return await GetAllRepoPullRequestsAsync(organization, repoName, state, 100);
         }
 
-        public IEnumerable<PullRequest> GetAllRepoPullRequests(string organization, string repoName, State state, int resultsPerPage)
+        public async Task<IEnumerable<PullRequest>> GetAllRepoPullRequestsAsync(string organization, string repoName, State state, int resultsPerPage)
         {
             string cacheKey = $"pulls|{organization}|{repoName}|{state}|{resultsPerPage}";
             var cachedResponse = _cache.Get<List<PullRequest>>(cacheKey);
@@ -121,14 +122,15 @@ namespace GithubQuery.Services
 
             do
             {
-                var response = AsyncHelper.RunSync(() => _httpClient.GetAsync(url));
+                var response = await _httpClient.GetAsync(url);
                 var linkHeader = new List<string>().AsEnumerable();
                 response.Headers.TryGetValues("Link", out linkHeader);
                 parsedHeader = linkHeader?.First().FromHeader();
                 
                 if (response.IsSuccessStatusCode)
                 {
-                    results.AddRange(JsonConvert.DeserializeObject<List<PullRequest>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
+                    var data = await response.Content.ReadAsStringAsync();
+                    results.AddRange(JsonConvert.DeserializeObject<List<PullRequest>>(data));
                     url = parsedHeader?.NextLink;
                 }
 
@@ -139,7 +141,7 @@ namespace GithubQuery.Services
             return results;
         }
         
-        public IEnumerable<PullRequest> GetRepoPullRequestsByPage(string organization, string repoName, State state, int pageNumber, int resultsPerPage)
+        public async Task<IEnumerable<PullRequest>> GetRepoPullRequestsByPageAsync(string organization, string repoName, State state, int pageNumber, int resultsPerPage)
         {
             string cacheKey = $"pulls|{organization}|{repoName}|{state}|{pageNumber}|{resultsPerPage}";
             var cachedResponse = _cache.Get<List<PullRequest>>(cacheKey);
@@ -150,13 +152,12 @@ namespace GithubQuery.Services
             }
 
             var results = new List<PullRequest>();
-            var response = 
-                AsyncHelper.RunSync(() => 
-                    _httpClient.GetAsync($"{_remoteServiceBaseUrl}/repos/{organization}/{repoName}/pulls?state={state}&page={pageNumber}&per_page={resultsPerPage}"));
+            var response = await _httpClient.GetAsync($"{_remoteServiceBaseUrl}/repos/{organization}/{repoName}/pulls?state={state}&page={pageNumber}&per_page={resultsPerPage}");
             
             if (response.IsSuccessStatusCode)
             {
-                results.AddRange(JsonConvert.DeserializeObject<List<PullRequest>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()));
+                var data = await response.Content.ReadAsStringAsync();
+                results.AddRange(JsonConvert.DeserializeObject<List<PullRequest>>(data));
             }
 
             _cache.Set(cacheKey, results, DateTimeOffset.Now.AddHours(1));
