@@ -46,22 +46,22 @@ namespace GithubQuery.Models
         public string Body { get; set; }
 
         [JsonProperty("created_at")]
-        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset? CreatedAt { get; set; }
 
         [JsonProperty("updated_at")]
-        public DateTimeOffset UpdatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
 
         [JsonProperty("closed_at")]
-        public DateTimeOffset ClosedAt { get; set; }
+        public DateTimeOffset? ClosedAt { get; set; }
 
         [JsonProperty("merged_at")]
-        public DateTimeOffset MergedAt { get; set; }
-
+        public DateTimeOffset? MergedAt { get; set; }
+        
         [JsonProperty("merge_commit_sha")]
         public string MergeCommitSha { get; set; }
 
         [JsonProperty("assignee")]
-        public List<object> Assignee { get; set; }
+        public object Assignee { get; set; }
 
         [JsonProperty("assignees")]
         public List<object> Assignees { get; set; }
