@@ -26,7 +26,8 @@ namespace GithubQuery
         public void ConfigureServices(IServiceCollection services)
         {
             services
-               .AddMvc(config => config.Filters.Add(typeof(ExceptionFilter)))
+               .AddMvc() 
+               //.AddMvc(config => config.Filters.Add(typeof(ExceptionFilter))) 
                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
                 {
